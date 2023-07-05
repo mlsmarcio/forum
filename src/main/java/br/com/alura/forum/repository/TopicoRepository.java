@@ -2,6 +2,8 @@ package br.com.alura.forum.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +16,7 @@ public interface TopicoRepository extends JpaRepository<Topico, Long> {
 	
 	// MESMA CONSULTA UTILIZANDO O JPQL 
 	@Query("SELECT t FROM Topico t WHERE t.curso.nome = :nomeCurso")
-	List<Topico> obterPorNomeDoCurso(@Param("nomeCurso") String nomeCurso);
+	Page<Topico> obterPorNomeDoCurso(@Param("nomeCurso") String nomeCurso, Pageable paginacao);
 	
 	
 

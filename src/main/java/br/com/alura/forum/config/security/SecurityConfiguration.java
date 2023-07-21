@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @Configuration
@@ -42,7 +43,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.antMatchers(HttpMethod.POST, "/auth").permitAll()
 			.anyRequest().authenticated()
 			.and().csrf().disable()  //tipo de ataque racker 
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // NÃO USARÁ SESSÃO
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // NÃO USARÁ SESSÃO
+			.and().addFilterBefore(new AutenticacaoViaTokenFilter(), UsernamePasswordAuthenticationFilter.class); // ESPECIFICA QUE EXECUTARÁ A LOGICA DO FILTRO AutenticacaoViaTokenFilter
 		
 	}
 

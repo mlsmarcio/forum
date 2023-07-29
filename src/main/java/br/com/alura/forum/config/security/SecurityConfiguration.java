@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -22,10 +21,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private AutenticacaoService autenticacaoService; 
 	
+	@Autowired
+	private TokenService tokenService;
+	
 	@Override
 	@Bean	// Especifica que esse método devolve o AuthenticationManager
-	protected AuthenticationManager authenticationManager() throws Exception {
-		return super.authenticationManager();
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
 	}
 
 	// CONFIGURAÇÕES DE AUTENTICAÇÃO, CONTROLE DE ACESSO, LOGIN
@@ -44,8 +46,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.anyRequest().authenticated()
 			.and().csrf().disable()  //tipo de ataque racker 
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // NÃO USARÁ SESSÃO
-			.and().addFilterBefore(new AutenticacaoViaTokenFilter(), UsernamePasswordAuthenticationFilter.class); // ESPECIFICA QUE EXECUTARÁ A LOGICA DO FILTRO AutenticacaoViaTokenFilter
-		
+			.and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService), 
+					UsernamePasswordAuthenticationFilter.class); // ESPECIFICA QUE EXECUTARÁ A LOGICA DO FILTRO AutenticacaoViaTokenFilter
 	}
 
 	// CONFIGURAÇÕES DE RECURSOS STATICOS, REQUISIÇÕES PARA ARQUIVOS, JS, CSS, IMG

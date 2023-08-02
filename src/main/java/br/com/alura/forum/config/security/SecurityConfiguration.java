@@ -14,6 +14,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import br.com.alura.forum.repository.UsuarioRepository;
+
 @EnableWebSecurity
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -23,6 +25,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	private TokenService tokenService;
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 	
 	@Override
 	@Bean	// Especifica que esse método devolve o AuthenticationManager
@@ -46,7 +51,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.anyRequest().authenticated()
 			.and().csrf().disable()  //tipo de ataque racker 
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // NÃO USARÁ SESSÃO
-			.and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService), 
+			.and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService, usuarioRepository), 
 					UsernamePasswordAuthenticationFilter.class); // ESPECIFICA QUE EXECUTARÁ A LOGICA DO FILTRO AutenticacaoViaTokenFilter
 	}
 
